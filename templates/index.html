@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block contenido %}
+<section class="hero p-4 p-md-5 mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-8">
+      <span class="badge badge-category mb-3">PAPELERÍA · ESCOLAR · ARTE</span>
+      <h1 class="display-4 fw-bold">¡Todo para crear en <span>Happy</span>! 🌈</h1>
+      <p class="lead mb-4">Encuentra cuadernos, colores, plumas y materiales para tus ideas. Reserva tus productos durante 5 minutos.</p>
+      <a class="btn btn-honey btn-lg" href="{{ url_for('ver_merch') }}">Explorar catálogo</a>
+      {% if not usuario_actual %}<a class="btn btn-outline-light btn-lg ms-2" href="{{ url_for('registro') }}">Crear mi cuenta</a>{% endif %}
+    </div>
+    <div class="col-lg-4 text-center"><div class="display-1">✏️📚🖍️</div><p class="mb-0">¡Haz tus ideas realidad!</p></div>
+  </div>
+</section>
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+  <div><h2 class="section-title mb-1">Productos destacados</h2><p class="text-secondary mb-0">Artículos disponibles en Happy</p></div>
+  <a href="{{ url_for('ver_merch') }}">Ver todo el catálogo →</a>
+</div>
+<div class="row g-4">
+{% for item in productos %}
+  <div class="col-sm-6 col-lg-4"><article class="book-card h-100">
+    {% if item.get('imagen_id') %}<img class="merch-cover" src="{{ url_for('imagen_merch',id=item._id) }}" alt="{{ item.nombre }}">{% else %}<div class="merch-placeholder">🛍️</div>{% endif %}
+    <div class="p-4"><span class="badge badge-category">{{ item.get('tipo','Papelería') }}</span><h3 class="h5 mt-2">{{ item.nombre }}</h3><p>{{ item.get('descripcion','') }}</p><p class="price-tag">${{ '%.2f'|format(item.precio) }} MXN</p><p class="text-secondary">{% if item.stock > 0 %}Disponibles: {{ item.stock }}{% else %}Agotado{% endif %}</p>
+    {% if item.stock > 0 %}<form method="post" action="{{ url_for('agregar_carrito',id=item._id) }}"><button class="btn btn-honey w-100">Reservar 5 minutos</button></form>{% else %}<button class="btn btn-secondary w-100" disabled>Agotado</button>{% endif %}</div>
+  </article></div>
+{% else %}<div class="col-12"><div class="empty-state text-center p-5"><h3>¡Próximamente!</h3><p>El catálogo está listo. El administrador puede agregar productos desde el panel.</p><a class="btn btn-honey" href="{{ url_for('ver_merch') }}">Ir al catálogo</a></div></div>{% endfor %}
+</div>
+{% endblock %}
